@@ -1,12 +1,45 @@
-from datetime import timedelta
+from datetime import datetime, timedelta
 import os.path
 import unittest
 
 from idelib.importer import importFile
-from endaq.ide import info, measurement
+from endaq.ide import info
 
 
 IDE_FILENAME = os.path.join(os.path.dirname(__file__), "test.ide")
+
+
+class TimeParseTest(unittest.TestCase):
+    """ Test the time parsing function.
+    """
+    def test_parse_time(self):
+        """ Test basic handling of non-strings. """
+        self.assertEqual(info.parse_time(None), None)
+        self.assertEqual(info.parse_time(""), None)
+        self.assertEqual(info.parse_time(42), 42)
+        self.assertRaises(TypeError, lambda *x: info.parse_time([1]),
+                          "parse_time() accepted a bad type (list)")
+
+
+    def test_parse_time_str(self):
+        """ Test time string parsing. """
+        self.assertEqual(info.parse_time("42"), 42 * 10**6)
+        self.assertEqual(info.parse_time("22:11"), 1331000000)
+        self.assertEqual(info.parse_time("3:22:11"), 1511000000)
+        self.assertEqual(info.parse_time("1d 3:22:11"), 1535000000)
+        self.assertRaises(ValueError, lambda *x: info.parse_time("bogus"),
+                          "parse_time() accepted a bad string")
+
+
+    def test_parse_time_datetime(self):
+        """ Test `datetime.datetime` and `datetime.timedelta` parsing. """
+        t1 = datetime(2021, 7, 8, 11, 28, 40, 800752)
+        t2 = datetime(2021, 7, 7, 0, 0)
+        td = timedelta(days=1, seconds=2345, microseconds=6789)
+
+        self.assertEqual(info.parse_time(td), td.total_seconds() * 10**6)
+        self.assertEqual(info.parse_time(t1 - t2), 127720.800752 * 10**6)
+        self.assertEqual(info.parse_time(t1, t2), 127720.800752 * 10**6)
 
 
 class ChannelTableFormattingTests(unittest.TestCase):
@@ -51,7 +84,7 @@ class ChannelTableTests(unittest.TestCase):
         self.dataset = importFile(IDE_FILENAME)
 
     def test_get_channel_table(self):
-        # XXX: Implement additional get_channel_table() tests
+        # TODO: Implement additional get_channel_table() tests?
         ct = info.get_channel_table(self.dataset)
 
         self.assertEqual(len(ct.data), len(self.dataset.getPlots()),
