@@ -252,7 +252,7 @@ def get_channel_table(dataset, measurement_type=ANY, start=None, end=None,
         result['start'].append(range_start)
         result['end'].append(range_end)
         result['duration'].append(duration)
-        result['samples'].append(int(samples))
+        result['samples'].append(samples)
         result['rate'].append(rate)
 
         dmin, dmean, dmax = data.getRangeMinMeanMax(start, end)
