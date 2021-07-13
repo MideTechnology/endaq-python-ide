@@ -40,16 +40,16 @@ def parse_time(t, datetime_start=None):
 
     if isinstance(t, (int, float)):
         return t
-    elif not t:
-        return None
 
     elif isinstance(t, str):
+        if not t:
+            return None
         orig = t
         t = t.strip().lower()
         for c in ":dhms":
             t = t.replace(c, ' ')
         if not all(c in string.digits + ' ' for c in t):
-            raise ValueError(f"Bad time string for parse_time(): {repr(orig)}")
+            raise ValueError(f"Bad time string for parse_time(): {orig!r}")
 
         micros = 0
         for part, mult in zip(reversed(t.split()), (1, 60, 60, 24)):
@@ -75,7 +75,10 @@ def parse_time(t, datetime_start=None):
             # datetime: make timedelta
             return (t - datetime_start).total_seconds() * 10**6
 
-    raise TypeError(f"Unsupported type for parse_time(): {type(t).__name__} ({repr(t)})")
+    elif not t:
+        return None
+
+    raise TypeError(f"Unsupported type for parse_time(): {type(t).__name__} ({t!r})")
 
 
 # ============================================================================
