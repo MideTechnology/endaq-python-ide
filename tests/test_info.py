@@ -91,5 +91,31 @@ class ChannelTableTests(unittest.TestCase):
                          "Length of table's data did not match number of subchannels in IDE")
 
 
+    def test_test_channel_table_ranges(self):
+        # Exclude channels with extremely low sample rates
+        # TODO: change acceptable delta based on sample rate
+        MIN_RATE = 10  # Hz
+        DELTA = 0.01  # seconds
+
+        # Test with a specified start
+        ct1 = info.get_channel_table(self.dataset, start="2s")
+        for n, t in enumerate(ct1.data['start']):
+            if ct1.data['rate'][n] < MIN_RATE:
+                continue
+            self.assertAlmostEqual(t / 10**6, 2, delta=DELTA, msg=f"{ct1.data['channel'][n]}")
+
+        # Test with a specified end
+        ct2 = info.get_channel_table(self.dataset, end="10s")
+        for n, t in enumerate(ct2.data['end']):
+            if ct1.data['rate'][n] < MIN_RATE:
+                continue
+            self.assertAlmostEqual(t / 10**6, 10, delta=DELTA, msg=f"{ct2.data['channel'][n]}")
+
+        # Test with both start and end specified
+        ct3 = info.get_channel_table(self.dataset, start="2s", end="10s")
+        self.assertListEqual(list(ct3.data['start']), list(ct1.data['start']))
+        self.assertListEqual(list(ct3.data['end']), list(ct2.data['end']))
+
+
 if __name__ == '__main__':
     unittest.main()

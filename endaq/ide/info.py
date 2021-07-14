@@ -38,7 +38,7 @@ def parse_time(t, datetime_start=None):
     # TODO: Put this somewhere else? It will be useful elsewhere, and shouldn't
     #   be bound to the `pandas` requirement in this module.
 
-    if isinstance(t, (int, float)):
+    if t is None or isinstance(t, (int, float)):
         return t
 
     elif isinstance(t, str):
@@ -74,9 +74,6 @@ def parse_time(t, datetime_start=None):
         if isinstance(t, datetime.datetime):
             # datetime: make timedelta
             return (t - datetime_start).total_seconds() * 10**6
-
-    elif not t:
-        return None
 
     raise TypeError(f"Unsupported type for parse_time(): {type(t).__name__} ({t!r})")
 
@@ -163,7 +160,7 @@ TABLE_FORMAT = {
 }
 
 
-def get_channel_table(dataset, measurement_type=ANY, start=None, end=None,
+def get_channel_table(dataset, measurement_type=ANY, start=0, end=None,
                       formatting=None, index=True, precision=4,
                       timestamps=False, **kwargs):
     """ Get summary data for all `SubChannel` objects in a `Dataset` that
@@ -179,12 +176,10 @@ def get_channel_table(dataset, measurement_type=ANY, start=None, end=None,
                 * ``":01"`` or ``":1"`` or ``"1s"`` (1 second)
                 * ``"22:11"`` (22 minutes, 11 seconds)
                 * ``"3:22:11"`` (3 hours, 22 minutes, 11 seconds)
-                * ``"1d 3:22:11"`` (3 hours, 22 minutes, 11 seconds)
+                * ``"1d 3:22:11"`` (1 day, 3 hours, 22 minutes, 11 seconds)
             * `datetime.timedelta` or `pandas.Timedelta` (time from the
               recording start)
             * `datetime.datetime` (an explicit UTC time)
-
-        @see: `parse_time()`
 
         :param dataset: A `idelib.dataset.Dataset` or a list of
             channels/subchannels from which to build the table.
