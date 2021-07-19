@@ -52,7 +52,7 @@ def parse_time(t, datetime_start=None):
             raise ValueError(f"Bad time string for parse_time(): {orig!r}")
 
         micros = 0
-        for part, mult in zip(reversed(t.split()), (1, 60, 60, 24)):
+        for part, mult in zip(reversed(t.split()), (1, 60, 3600, 86400)):
             if not part:
                 continue
             part = part.strip(string.ascii_letters + string.punctuation + string.whitespace)

@@ -23,10 +23,10 @@ class TimeParseTest(unittest.TestCase):
 
     def test_parse_time_str(self):
         """ Test time string parsing. """
-        self.assertEqual(info.parse_time("42"), 42 * 10**6)
+        self.assertEqual(info.parse_time("11"), 11 * 10**6)
         self.assertEqual(info.parse_time("22:11"), 1331000000)
-        self.assertEqual(info.parse_time("3:22:11"), 1511000000)
-        self.assertEqual(info.parse_time("1d 3:22:11"), 1535000000)
+        self.assertEqual(info.parse_time("3:22:11"), 12131000000)
+        self.assertEqual(info.parse_time("1d 3:22:11"), 98531000000)
         self.assertRaises(ValueError, lambda *x: info.parse_time("bogus"),
                           "parse_time() accepted a bad string")
 
