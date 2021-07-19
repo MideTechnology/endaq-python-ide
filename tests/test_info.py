@@ -91,7 +91,7 @@ class ChannelTableTests(unittest.TestCase):
                          "Length of table's data did not match number of subchannels in IDE")
 
 
-    def test_test_channel_table_ranges(self):
+    def test_channel_table_ranges(self):
         # Exclude channels with extremely low sample rates
         # TODO: change acceptable delta based on sample rate
         MIN_RATE = 10  # Hz
