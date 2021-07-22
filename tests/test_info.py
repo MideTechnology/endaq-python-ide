@@ -2,11 +2,19 @@ from datetime import datetime, timedelta
 import os.path
 import unittest
 
+import pytest
+import numpy as np
 from idelib.importer import importFile
 from endaq.ide import info
 
 
 IDE_FILENAME = os.path.join(os.path.dirname(__file__), "test.ide")
+
+
+@pytest.fixture
+def test_IDE():
+    with importFile(IDE_FILENAME) as ds:
+        yield ds
 
 
 class TimeParseTest(unittest.TestCase):
@@ -115,6 +123,16 @@ class ChannelTableTests(unittest.TestCase):
         ct3 = info.get_channel_table(self.dataset, start="2s", end="10s")
         self.assertListEqual(list(ct3.data['start']), list(ct1.data['start']))
         self.assertListEqual(list(ct3.data['end']), list(ct2.data['end']))
+
+
+def test_toPandas(test_IDE):
+    eventarray = test_IDE.channels[32].getSession()
+
+    result = info.toPandas(eventarray)
+
+    assert len(result) == len(eventarray)
+    assert result.columns.tolist() == [sch.axisName for sch in test_IDE.channels[32].subchannels]
+    assert np.all(result.to_numpy() == eventarray.arrayValues().T)
 
 
 if __name__ == '__main__':
