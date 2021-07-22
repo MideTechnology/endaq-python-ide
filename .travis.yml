@@ -2,6 +2,7 @@
 before_install:
   - python --version
 install:
+  - pip install -U pip
   - pip install .[test]
 script: python -m pytest ./tests --cov=endaq
 after_success:
