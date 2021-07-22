@@ -1,5 +1,6 @@
 import setuptools
 
+
 with open('README.rst', 'r', encoding='utf-8') as fh:
     long_description = fh.read()
 
