@@ -1,12 +1,18 @@
 import setuptools
 
+
 with open('README.rst', 'r', encoding='utf-8') as fh:
     long_description = fh.read()
 
 INSTALL_REQUIRES = [
+    "idelib",
+    "pandas",
+    "jinja2",  # required for pandas.DataFrame.style
     ]
 
 TEST_REQUIRES = [
+    "pytest",
+    "pytest-cov",
     ]
 
 EXAMPLE_REQUIRES = [
