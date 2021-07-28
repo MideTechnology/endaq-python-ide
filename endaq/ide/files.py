@@ -130,7 +130,7 @@ def get_doc(name=None, filename=None, url=None, parsed=True, **kwargs):
         if os.path.isfile(name):
             filename = name
         else:
-            parsed_url = urlparse(name)
+            parsed_url = urlparse(name.replace('\\', '/'))
             if not parsed_url.scheme or parsed_url.scheme == "file":
                 filename = parsed_url.path
             else:
