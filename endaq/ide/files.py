@@ -3,6 +3,7 @@ files.py: File access functions.
 
 TODO: Have `endaq/ide/__init__.py` import this module's contents?
 """
+from io import BytesIO
 import os
 import tempfile
 from urllib.parse import urlparse
@@ -11,6 +12,7 @@ from idelib.importer import openFile, readData
 import requests
 
 from .gdrive import gdrive_download
+from .util import validate
 
 __all__ = ['get_doc']
 
@@ -148,6 +150,10 @@ def get_doc(name=None, filename=None, url=None, parsed=True, **kwargs):
             raise ValueError(f"Unsupported transfer scheme: {parsed_url.scheme}")
 
     if stream:
+        if not validate(stream):
+            raise ValueError(f"Could not read a Dataset from '{original}'"
+                             f"(not an IDE file?)")
+
         kwargs.setdefault('getExitCond', False)
         doc = openFile(stream, **kwargs)
         # TODO: Validation?
