@@ -78,7 +78,7 @@ class TestGetByType:
 
 
     def test_filter_channels(self, dataset):
-        """ Test test_filter_channels() filtering of Channels (filter applies
+        """ Test filter_channels() filtering of Channels (filter applies
             if any SubChannel matches).
         """
         channels = dataset.channels
@@ -94,7 +94,7 @@ class TestGetByType:
 
 
     def test_filter_channels_subchannels(self, dataset):
-        """ Test test_filter_channels() filtering of SubChannels.
+        """ Test filter_channels() filtering of SubChannels.
         """
         subchannels = dataset.getPlots()
         everything = measurement.filter_channels(subchannels)
