@@ -1,7 +1,10 @@
 """
 files.py: File access functions.
 
-TODO: Have `endaq/ide/__init__.py` import this module's contents?
+TODO: Progress callback for `get_doc()` (separate from the `callback` argument
+ of `idelib.importer.openFile()` and `idelib.importer.readData()`?
+TODO: Exception subclasses for `get_doc()` failures, to separate the function's
+ own errors from `ValueError` exceptions raised by things the function calls?
 """
 from io import BytesIO
 import os
@@ -21,8 +24,10 @@ __all__ = ['get_doc']
 # ============================================================================
 
 
-def _get_url(url, localfile=None, params=None, cookies=None, **kwargs):
+def _get_url(url, localfile=None, params=None, cookies=None):
     """
+    Retrieve an IDE from a (HTTP/HTTPS) URL, including Google Drive shared
+    links.
 
     :param url: The file's URL.
     :param localfile: The local filename (if saving the file).
@@ -34,7 +39,7 @@ def _get_url(url, localfile=None, params=None, cookies=None, **kwargs):
     parsed_url = urlparse(url)
     session = requests.Session()
 
-    if parsed_url.netloc.endswith('google.com'):
+    if parsed_url.netloc.lower().endswith('google.com'):
         response, filename = gdrive_download(url, localfile, params=params, cookies=cookies)
     else:
         response = session.get(parsed_url.geturl(), params=params, cookies=cookies)
@@ -58,7 +63,7 @@ def _get_url(url, localfile=None, params=None, cookies=None, **kwargs):
 
     total = 0
     for chunk in response.iter_content(2**15):
-        # TODO: Confirm that this is an IDE from 1st chunk
+        # future: Confirm that this is an IDE from 1st chunk, avoiding download if not
         if chunk:
             stream.write(chunk)
             total += len(chunk)
@@ -73,7 +78,8 @@ def _get_url(url, localfile=None, params=None, cookies=None, **kwargs):
 #
 # ============================================================================
 
-def get_doc(name=None, filename=None, url=None, parsed=True, **kwargs):
+def get_doc(name=None, filename=None, url=None, parsed=True,
+            localfile=None, params=None, cookies=None, **kwargs):
     """
     Retrieve an IDE file from either a file or URL.
 
@@ -117,11 +123,6 @@ def get_doc(name=None, filename=None, url=None, parsed=True, **kwargs):
     if len([x for x in (name, filename, url) if x]) != 1:
         raise TypeError("Only one source can be specified: name, filename, or url")
 
-    # Remove URL-specific keyword arguments. Remaining arguments will be used
-    # with `openFile()`/`importFile()`.
-    url_args = {k: kwargs.pop(k) for k in kwargs
-                if k in ('localfile', 'params', 'cookies', 'drive_url')}
-
     original = name or filename or url  # For error reporting
     stream = None
     parsed_url = None
@@ -142,11 +143,12 @@ def get_doc(name=None, filename=None, url=None, parsed=True, **kwargs):
 
     elif url:
         kwargs.setdefault('name', url)
+        kwargs.setdefault('getExitCond', False)  # Doesn't work with URL files. Fix?
         parsed_url = parsed_url or urlparse(url)
         if parsed_url.scheme.startswith('http'):
-            stream, _total = _get_url(url, **url_args)
+            stream, _total = _get_url(url, localfile=localfile, params=params, cookies=cookies)
         else:
-            # future: more fetching schemes before this `else`?
+            # future: more fetching schemes before this `else` (ftp, etc.)?
             raise ValueError(f"Unsupported transfer scheme: {parsed_url.scheme}")
 
     if stream:
@@ -154,12 +156,11 @@ def get_doc(name=None, filename=None, url=None, parsed=True, **kwargs):
             raise ValueError(f"Could not read a Dataset from '{original}'"
                              f"(not an IDE file?)")
 
-        kwargs.setdefault('getExitCond', False)
         doc = openFile(stream, **kwargs)
-        # TODO: Validation?
+
         if parsed:
             readData(doc, **kwargs)
         return doc
 
-    raise ValueError(f"Could not read a Dataset from '{original}'")
+    raise ValueError(f"Could not read data from '{original}'")
 
