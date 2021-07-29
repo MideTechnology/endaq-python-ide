@@ -2,17 +2,31 @@ import os.path
 import unittest
 
 from idelib.dataset import Dataset
+from idelib.importer import importFile
 from endaq.ide import files
 
 
 IDE_FILENAME = os.path.join(os.path.dirname(__file__), "test.ide")
 IDE_LOCAL_URL = "file://" + IDE_FILENAME.replace('\\', '/')
 
+IDE_URL_HTTP = "http://mide.services/software/test.ide"
+IDE_URL_HTTPS = "https://mide.services/software/test.ide"
+IDE_GDRIVE_URL = "https://drive.google.com/file/d/1t3JqbZGhuZbIK9agH24YZIdVE26-NOF5/view?usp=sharing"
+
 
 class GetDocTests(unittest.TestCase):
 
+    def setUp(self):
+        self.dataset = importFile(IDE_FILENAME)
+
+
     def test_get_doc_basics(self):
         doc = files.get_doc(IDE_FILENAME)
+        self.assertEqual(len(self.dataset.ebmldoc), len(doc.ebmldoc),
+                         "HTTP copy length did not match local copy's")
+        self.assertTrue(all(a == b for a, b in zip(self.dataset.ebmldoc, doc.ebmldoc)),
+                        "get_doc() copy contents did not match that of local copy")
+
         self.assertIsInstance(doc, Dataset, "get_doc() did not return a Dataset")
         self.assertRaises(TypeError, files.get_doc, (), {})
         self.assertRaises(TypeError, files.get_doc, (IDE_FILENAME), {'url': IDE_LOCAL_URL})
@@ -34,21 +48,38 @@ class GetDocTests(unittest.TestCase):
 
         # Verify a "file:" URL (with Windows delimiter) translates
         if "\\" in IDE_FILENAME:
-            doc4 = files.get_doc( "file://" + IDE_FILENAME)
+            doc4 = files.get_doc("file://" + IDE_FILENAME)
             self.assertEqual(doc1.filename, doc4.filename)
 
-        # Verify validation
+        # Verify validation using known non-IDE (this file)
         self.assertRaises(ValueError, files.get_doc, (__file__), {})
 
 
     def test_get_doc_url(self):
-        """ Test getting an IDE from a URL (HTTP/HTTPS). """
-        print("test_get_doc_url() Not implemented!")
+        """ Test getting an IDE from a URL. """
+        # This is admittedly a simplistic test, but it reveals a great deal.
+        # It is unlikely that only the content within EBML elements would be
+        # corrupted but not the EBML structure.
+        doc_http = files.get_doc(IDE_URL_HTTP)
+        self.assertEqual(len(self.dataset.ebmldoc), len(doc_http.ebmldoc),
+                         "HTTP copy length did not match that of local copy")
+        self.assertTrue(all(a == b for a, b in zip(self.dataset.ebmldoc, doc_http.ebmldoc)),
+                        "HTTP copy contents did not match that of local copy")
+
+        doc_https = files.get_doc(IDE_URL_HTTPS)
+        self.assertEqual(len(self.dataset.ebmldoc), len(doc_https.ebmldoc),
+                         "HTTPS copy length did not match that of local copy")
+        self.assertTrue(all(a == b for a, b in zip(self.dataset.ebmldoc, doc_https.ebmldoc)),
+                        "HTTPS copy contents did not match that of local copy")
 
 
     def test_get_doc_gdrive(self):
         """ Test getting an IDE from a Google Drive URL. """
-        print("test_get_doc_gdrive() Not implemented!")
+        doc = files.get_doc(IDE_GDRIVE_URL)
+        self.assertEqual(len(self.dataset.ebmldoc), len(doc.ebmldoc),
+                         "Google Drive copy length did not match that of local copy")
+        self.assertTrue(all(a == b for a, b in zip(self.dataset.ebmldoc, doc.ebmldoc)),
+                        "Google Drive copy contents did not match that of local copy")
 
 
 if __name__ == '__main__':
