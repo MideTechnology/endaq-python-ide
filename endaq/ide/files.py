@@ -2,7 +2,7 @@
 files.py: File access functions.
 
 TODO: Progress callback for `get_doc()` (separate from the `callback` argument
- of `idelib.importer.openFile()` and `idelib.importer.readData()`?
+ of `idelib.importer.openFile()` and `idelib.importer.readData()`?)
 TODO: Exception subclasses for `get_doc()` failures, to separate the function's
  own errors from `ValueError` exceptions raised by things the function calls?
 """
@@ -117,7 +117,6 @@ def get_doc(name=None, filename=None, url=None, parsed=True,
     :return: The fetched IDE data.
 
     Additionally, `get_doc()` will accept the keyword arguments for
-    `urllib.request.urlopen()`, as well as those for
     `idelib.importer.importFile()` or `idelib.importer.openFile()`
     """
     if len([x for x in (name, filename, url) if x]) != 1:
