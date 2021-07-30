@@ -22,9 +22,9 @@ class GetDocTests(unittest.TestCase):
 
     def test_get_doc_basics(self):
         # Parameter tests
-        self.assertRaises(TypeError, files.get_doc, (), {})
-        self.assertRaises(TypeError, files.get_doc, (IDE_FILENAME), {'url': IDE_LOCAL_URL})
-        self.assertRaises(TypeError, files.get_doc, (), {'filename': IDE_FILENAME, 'url': IDE_LOCAL_URL})
+        self.assertRaises(TypeError, files.get_doc)
+        self.assertRaises(TypeError, files.get_doc, IDE_FILENAME, url=IDE_LOCAL_URL)
+        self.assertRaises(TypeError, files.get_doc, filename=IDE_FILENAME, url=IDE_LOCAL_URL)
 
 
     def test_get_doc_files(self):
