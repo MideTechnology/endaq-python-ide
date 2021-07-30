@@ -21,13 +21,7 @@ class GetDocTests(unittest.TestCase):
 
 
     def test_get_doc_basics(self):
-        doc = files.get_doc(IDE_FILENAME)
-        self.assertEqual(len(self.dataset.ebmldoc), len(doc.ebmldoc),
-                         "HTTP copy length did not match local copy's")
-        self.assertTrue(all(a == b for a, b in zip(self.dataset.ebmldoc, doc.ebmldoc)),
-                        "get_doc() copy contents did not match that of local copy")
-
-        self.assertIsInstance(doc, Dataset, "get_doc() did not return a Dataset")
+        # Parameter tests
         self.assertRaises(TypeError, files.get_doc, (), {})
         self.assertRaises(TypeError, files.get_doc, (IDE_FILENAME), {'url': IDE_LOCAL_URL})
         self.assertRaises(TypeError, files.get_doc, (), {'filename': IDE_FILENAME, 'url': IDE_LOCAL_URL})
@@ -37,6 +31,13 @@ class GetDocTests(unittest.TestCase):
         """ Test basic opening of a file from a filename. """
         # The baseline file
         doc1 = files.get_doc(IDE_FILENAME)
+        self.assertEqual(len(self.dataset.ebmldoc), len(doc1.ebmldoc),
+                         "get_doc(filename) copy length did not match that of local copy")
+        self.assertTrue(all(a == b for a, b in zip(self.dataset.ebmldoc, doc1.ebmldoc)),
+                        "get_doc(filename) copy contents did not match that of local copy")
+
+        self.assertIsInstance(doc1, Dataset,
+                              "get_doc(filename) did not return a Dataset")
 
         # Verify `name` and `filename` parameters equivalent
         doc2 = files.get_doc(filename=IDE_FILENAME)
@@ -52,7 +53,7 @@ class GetDocTests(unittest.TestCase):
             self.assertEqual(doc1.filename, doc4.filename)
 
         # Verify validation using known non-IDE (this file)
-        self.assertRaises(ValueError, files.get_doc, (__file__), {})
+        self.assertRaises(ValueError, files.get_doc, __file__)
 
 
     def test_get_doc_url(self):
@@ -61,12 +62,16 @@ class GetDocTests(unittest.TestCase):
         # It is unlikely that only the content within EBML elements would be
         # corrupted but not the EBML structure.
         doc_http = files.get_doc(IDE_URL_HTTP)
+        self.assertIsInstance(doc_http, Dataset,
+                              "get_doc() did not return a Dataset")
         self.assertEqual(len(self.dataset.ebmldoc), len(doc_http.ebmldoc),
                          "HTTP copy length did not match that of local copy")
         self.assertTrue(all(a == b for a, b in zip(self.dataset.ebmldoc, doc_http.ebmldoc)),
                         "HTTP copy contents did not match that of local copy")
 
         doc_https = files.get_doc(IDE_URL_HTTPS)
+        self.assertIsInstance(doc_https, Dataset,
+                              "get_doc() did not return a Dataset")
         self.assertEqual(len(self.dataset.ebmldoc), len(doc_https.ebmldoc),
                          "HTTPS copy length did not match that of local copy")
         self.assertTrue(all(a == b for a, b in zip(self.dataset.ebmldoc, doc_https.ebmldoc)),
@@ -76,6 +81,8 @@ class GetDocTests(unittest.TestCase):
     def test_get_doc_gdrive(self):
         """ Test getting an IDE from a Google Drive URL. """
         doc = files.get_doc(IDE_GDRIVE_URL)
+        self.assertIsInstance(doc, Dataset,
+                              "get_doc() did not return a Dataset")
         self.assertEqual(len(self.dataset.ebmldoc), len(doc.ebmldoc),
                          "Google Drive copy length did not match that of local copy")
         self.assertTrue(all(a == b for a, b in zip(self.dataset.ebmldoc, doc.ebmldoc)),
