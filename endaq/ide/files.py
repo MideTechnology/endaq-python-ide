@@ -39,7 +39,8 @@ def _get_url(url, localfile=None, params=None, cookies=None):
     parsed_url = urlparse(url)
     session = requests.Session()
 
-    if parsed_url.netloc.lower().endswith('google.com'):
+    netloc = parsed_url.netloc.lower()
+    if netloc.endswith('.google.com') or netloc == "google.com":
         response, filename = gdrive_download(url, localfile, params=params, cookies=cookies)
     else:
         response = session.get(parsed_url.geturl(), params=params, cookies=cookies)
