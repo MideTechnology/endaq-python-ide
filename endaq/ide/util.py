@@ -38,16 +38,9 @@ def validate(stream, from_pos=False, lookahead=25, percent=.5):
         doc = schema.load(stream, headers=True)
 
         # Basic test: is it EBML data in the expected schema?
-        known = 0
-        for idx, el in enumerate(doc):
-            if idx >= lookahead:
-                break
-            if el.id in schema.elements:
-                known += 1
-        if known < lookahead * percent:
-            return False
+        known = sum((el.id in schema.elements) for idx, el in zip(range(lookahead), doc))
 
-        return True
+        return known >= lookahead * percent
 
     finally:
         stream.seek(orig_pos)
