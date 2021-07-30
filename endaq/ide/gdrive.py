@@ -65,7 +65,6 @@ def gdrive_download(url, localfile, params=None, cookies=None, drive_url=DRIVE_U
                          f"({response.status_code}: {response.reason})")
 
     # A response with the file will have its name in the headers.
-    name = None
 
     if 'Content-Disposition' not in response.headers:
         # TODO: This is probably an intermediate page, possibly a warning.
@@ -75,10 +74,7 @@ def gdrive_download(url, localfile, params=None, cookies=None, drive_url=DRIVE_U
                          f"(not shared 'anyone with link'?)")
 
     m = re.search('filename="(.*)"', ''.join(response.headers['Content-Disposition']))
-    if m:
-        name = m.groups()[0]
-
-    if not name:
+    if not m:
         raise ValueError(f"Could not retrieve data from URL {url}")
 
-    return response, name
+    return response, m.groups()[0]
