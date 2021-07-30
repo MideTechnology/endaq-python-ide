@@ -74,10 +74,9 @@ def gdrive_download(url, localfile, params=None, cookies=None, drive_url=DRIVE_U
         raise ValueError(f"Could not retrieve data from URL {url} "
                          f"(not shared 'anyone with link'?)")
 
-    if 'Content-Disposition' in response.headers:
-        m = re.search('filename="(.*)"', ''.join(response.headers['Content-Disposition']))
-        if m:
-            name = m.groups()[0]
+    m = re.search('filename="(.*)"', ''.join(response.headers['Content-Disposition']))
+    if m:
+        name = m.groups()[0]
 
     if not name:
         raise ValueError(f"Could not retrieve data from URL {url}")
