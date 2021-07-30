@@ -6,7 +6,6 @@ TODO: Progress callback for `get_doc()` (separate from the `callback` argument
 TODO: Exception subclasses for `get_doc()` failures, to separate the function's
  own errors from `ValueError` exceptions raised by things the function calls?
 """
-from io import BytesIO
 import os
 import tempfile
 from urllib.parse import urlparse
@@ -153,6 +152,7 @@ def get_doc(name=None, filename=None, url=None, parsed=True,
 
     if stream:
         if not validate(stream):
+            stream.close()
             raise ValueError(f"Could not read a Dataset from '{original}'"
                              f"(not an IDE file?)")
 
@@ -160,6 +160,7 @@ def get_doc(name=None, filename=None, url=None, parsed=True,
 
         if parsed:
             readData(doc, **kwargs)
+
         return doc
 
     raise ValueError(f"Could not read data from '{original}'")
