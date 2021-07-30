@@ -150,15 +150,20 @@ def get_doc(name=None, filename=None, url=None, parsed=True,
             # future: more fetching schemes before this `else` (ftp, etc.)?
             raise ValueError(f"Unsupported transfer scheme: {parsed_url.scheme}")
 
-    if not stream:
-        raise ValueError(f"Could not read data from '{original}'")
+    # On error, clean up the stream created
+    try:
+        if not stream:
+            raise ValueError(f"Could not read data from '{original}'")
 
-    if not validate(stream):
-        raise ValueError(f"Could not read a Dataset from '{original}'"
-                         f"(not an IDE file?)")
+        if not validate(stream):
+            raise ValueError(f"Could not read a Dataset from '{original}'"
+                             f"(not an IDE file?)")
 
-    doc = openFile(stream, **kwargs)
+        doc = openFile(stream, **kwargs)
 
-    if parsed:
-        readData(doc, **kwargs)
-    return doc
+        if parsed:
+            readData(doc, **kwargs)
+        return doc
+    except:
+        stream.close()
+        raise
