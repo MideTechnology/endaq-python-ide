@@ -45,12 +45,12 @@
       ]
       # Naming Conventions
       argument_naming-style="snake_case"
-      attr-naming-style="camelCase"
+      attr-naming-style="snake_case"
       class-naming-style="PascalCase"
       class-attribute-naming-style="UPPER_CASE"
       const-naming-style="UPPER_CASE"
       function-naming-style="snake_case"
-      inlinevar-naming-style="camelCase"
+      inlinevar-naming-style="snake_case"
       method-naming-style="snake_case"
       module-naming-style="snake_case"
       variable-naming-style="snake_case"
