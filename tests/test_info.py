@@ -128,7 +128,7 @@ class ChannelTableTests(unittest.TestCase):
 def test_toPandas(test_IDE):
     eventarray = test_IDE.channels[32].getSession()
 
-    result = info.toPandas(eventarray)
+    result = info.to_pandas(eventarray)
 
     assert len(result) == len(eventarray)
     assert result.columns.tolist() == [sch.axisName for sch in test_IDE.channels[32].subchannels]

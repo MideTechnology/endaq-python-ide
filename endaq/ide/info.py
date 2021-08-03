@@ -279,7 +279,7 @@ def get_channel_table(dataset, measurement_type=ANY, start=0, end=None,
         return styled
 
 
-def toPandas(eventarray):
+def to_pandas(eventarray):
     """ Read data from an eventarray object into a pandas DataFrame.
     """
     data = eventarray.arraySlice()
@@ -296,4 +296,3 @@ def toPandas(eventarray):
         data[1:].T,
         columns=columns,
     )
-
