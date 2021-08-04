@@ -7,6 +7,7 @@ import string
 import warnings
 
 import pandas as pd
+import idelib
 
 from .measurement import ANY, get_channels
 
@@ -276,3 +277,22 @@ def get_channel_table(dataset, measurement_type=ANY, start=0, end=None,
         return styled.hide_index()
     else:
         return styled
+
+
+def to_pandas(eventarray):
+    """ Read data from an eventarray object into a pandas DataFrame.
+    """
+    data = eventarray.arraySlice()
+
+    if isinstance(eventarray.parent, idelib.dataset.SubChannel):
+        columns = [eventarray.parent.axisName]
+    elif isinstance(eventarray.parent, idelib.dataset.Channel):
+        columns = [
+            eventarray.parent.subchannels[i].axisName
+            for i in range(len(eventarray.parent))
+        ]
+
+    return pd.DataFrame(
+        data[1:].T,
+        columns=columns,
+    )
