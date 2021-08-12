@@ -286,15 +286,17 @@ def to_pandas(eventarray):
     t, data = data[0], data[1:]
 
     if isinstance(eventarray.parent, idelib.dataset.SubChannel):
-        columns = [eventarray.parent.axisName]
+        axis_names = [eventarray.parent.axisName]
     elif isinstance(eventarray.parent, idelib.dataset.Channel):
-        columns = [
+        axis_names = [
             eventarray.parent.subchannels[i].axisName
             for i in range(len(eventarray.parent))
         ]
+    else:
+        raise RuntimeError(f"unknown channel type {type(eventarray.parent)}")
 
     return pd.DataFrame(
         data.T,
         index=(t*1000).astype("timedelta64[ns]"),
-        columns=columns,
+        columns=axis_names,
     )
