@@ -125,7 +125,7 @@ class ChannelTableTests(unittest.TestCase):
         self.assertListEqual(list(ct3.data['end']), list(ct2.data['end']))
 
 
-def test_toPandas(test_IDE):
+def test_to_pandas(test_IDE):
     eventarray = test_IDE.channels[32].getSession()
 
     result = info.to_pandas(eventarray)
