@@ -1,6 +1,8 @@
 """
 Functions for retrieving summary data from a dataset.
 """
+from __future__ import annotations
+
 from collections import defaultdict
 import datetime
 import string
@@ -279,7 +281,7 @@ def get_channel_table(dataset, measurement_type=ANY, start=0, end=None,
         return styled
 
 
-def to_pandas(eventarray):
+def to_pandas(eventarray: idelib.dataset.EventArray) -> pd.DataFrame:
     """ Read data from an eventarray object into a pandas DataFrame.
     """
     data = eventarray.arraySlice()
@@ -302,7 +304,7 @@ def to_pandas(eventarray):
     )
 
 
-def to_xarray(eventarray):
+def to_xarray(eventarray: idelib.dataset.EventArray) -> xarray.DataArray:
     """ Read data from an eventarray object into a xarray DataArray.
     """
     try:
