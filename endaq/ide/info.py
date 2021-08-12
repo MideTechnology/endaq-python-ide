@@ -283,6 +283,7 @@ def to_pandas(eventarray):
     """ Read data from an eventarray object into a pandas DataFrame.
     """
     data = eventarray.arraySlice()
+    t, data = data[0], data[1:]
 
     if isinstance(eventarray.parent, idelib.dataset.SubChannel):
         columns = [eventarray.parent.axisName]
@@ -293,6 +294,7 @@ def to_pandas(eventarray):
         ]
 
     return pd.DataFrame(
-        data[1:].T,
+        data.T,
+        index=(t*1000).astype("timedelta64[ns]"),
         columns=columns,
     )

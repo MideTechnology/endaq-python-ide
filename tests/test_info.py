@@ -132,6 +132,10 @@ def test_toPandas(test_IDE):
 
     assert len(result) == len(eventarray)
     assert result.columns.tolist() == [sch.axisName for sch in test_IDE.channels[32].subchannels]
+    np.testing.assert_allclose(
+        result.index.to_numpy() / np.timedelta64(1, 'us'),
+        eventarray.arraySlice()[0],
+    )
     assert np.all(result.to_numpy() == eventarray.arrayValues().T)
 
 
