@@ -7,6 +7,11 @@ import numpy as np
 from idelib.importer import importFile
 from endaq.ide import info
 
+try:
+    import xarray as xr
+except ImportError:
+    xr = None
+
 
 IDE_FILENAME = os.path.join(os.path.dirname(__file__), "test.ide")
 
@@ -137,6 +142,23 @@ def test_to_pandas(test_IDE):
         eventarray.arraySlice()[0],
     )
     assert np.all(result.to_numpy() == eventarray.arrayValues().T)
+
+
+@pytest.mark.skipif(xr is None, reason="`xarray` is required to run this test")
+def test_to_xarray(test_IDE):
+    eventarray = test_IDE.channels[32].getSession()
+
+    result = info.to_xarray(eventarray)
+
+    assert len(result) == len(eventarray)
+    assert result.axis.to_numpy().tolist() == [sch.axisName for sch in test_IDE.channels[32].subchannels]
+    np.testing.assert_allclose(
+        result.time.to_numpy() / np.timedelta64(1, 'us'),
+        eventarray.arraySlice()[0],
+    )
+    assert np.all(result.to_numpy() == eventarray.arrayValues().T)
+
+    assert result.time.attrs["dt"] == 1 / eventarray.getSampleRate()
 
 
 if __name__ == '__main__':

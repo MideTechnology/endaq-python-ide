@@ -300,3 +300,40 @@ def to_pandas(eventarray):
         index=(t*1000).astype("timedelta64[ns]"),
         columns=axis_names,
     )
+
+
+def to_xarray(eventarray):
+    """ Read data from an eventarray object into a xarray DataArray.
+    """
+    try:
+        import xarray as xr
+    except ImportError:
+        raise ImportError(
+            "`to_xarray` requires `xarray` to be installed in the Python"
+            " runtime environment"
+        )
+
+    data = eventarray.arraySlice()
+    t, data = data[0], data[1:]
+
+    if isinstance(eventarray.parent, idelib.dataset.SubChannel):
+        axis_names = [eventarray.parent.axisName]
+    elif isinstance(eventarray.parent, idelib.dataset.Channel):
+        axis_names = [
+            eventarray.parent.subchannels[i].axisName
+            for i in range(len(eventarray.parent))
+        ]
+    else:
+        raise RuntimeError(f"unknown channel type {type(eventarray.parent)}")
+
+    result = xr.DataArray(
+        data.T,
+        dims=("time", "axis"),
+        coords=dict(
+            time=(t*1000).astype("timedelta64[ns]"),
+            axis=axis_names,
+        ),
+    )
+    result.time.attrs["dt"] = 1 / eventarray.getSampleRate()
+
+    return result
