@@ -4,14 +4,11 @@ import setuptools
 with open('README.rst', 'r', encoding='utf-8') as fh:
     long_description = fh.read()
 
-with open('requirements.txt', 'r', encoding='utf-8') as fh:
-    INSTALL_REQUIRES = [line.strip() for line in fh if line]
-
-# INSTALL_REQUIRES = [
-#     "idelib",
-#     "pandas",
-#     "jinja2",  # required for pandas.DataFrame.style
-#     ]
+INSTALL_REQUIRES = [
+    "idelib",
+    "pandas",
+    "jinja2",  # required for pandas.DataFrame.style
+    ]
 
 TEST_REQUIRES = [
     "pytest",
