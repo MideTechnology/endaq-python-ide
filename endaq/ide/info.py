@@ -271,8 +271,7 @@ def get_channel_table(dataset, measurement_type=ANY, start=0, end=None,
     if isinstance(formatting, dict):
         style.update(formatting)
 
-    styled = pd.DataFrame(result).style.format(style)
-    styled.set_precision(precision)
+    styled = pd.DataFrame(result).style.format(style, precision=precision)
     if not index:
         return styled.hide_index()
     else:
