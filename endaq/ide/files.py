@@ -97,6 +97,7 @@ def get_doc(name=None, filename=None, url=None, parsed=True, start=0, end=None,
     get_doc("https://example.com/remote_recording.ide")
     get_doc(filename="my_recording.ide")
     get_doc(url="https://example.com/remote_recording.ide")
+    get_doc(filename="my_recording.ide", start="1:23")
     ```
 
     The `start` and `end` times, if used, may be specified in several
