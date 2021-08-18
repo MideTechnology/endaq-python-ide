@@ -1,11 +1,11 @@
 """
-files.py: File access functions.
-
-TODO: Progress callback for `get_doc()` (separate from the `callback` argument
- of `idelib.importer.openFile()` and `idelib.importer.readData()`?)
-TODO: Exception subclasses for `get_doc()` failures, to separate the function's
- own errors from `ValueError` exceptions raised by things the function calls?
+files.py: IDE file access functions.
 """
+# TODO: Progress callback for `get_doc()` (separate from the `callback` argument
+#  of `idelib.importer.openFile()` and `idelib.importer.readData()`?)
+# TODO: Exception subclasses for `get_doc()` failures, to separate the function's
+#  own errors from `ValueError` exceptions raised by things the function calls?
+
 from datetime import datetime
 import os
 from pathlib import Path
@@ -20,7 +20,7 @@ from .gdrive import gdrive_download
 from .info import parse_time
 from .util import validate
 
-__all__ = ['get_doc']
+__all__ = ['get_doc', 'extract_time']
 
 # ============================================================================
 #
@@ -207,7 +207,6 @@ def get_doc(name=None, filename=None, url=None, parsed=True, start=0, end=None,
     raise ValueError(f"Could not read data from '{original}'")
 
 
-
 def extract_time(doc, out, start=0, end=None, channels=None, **kwargs):
     """
     Efficiently extract data within a certain interval from an IDE file. Note
@@ -228,7 +227,8 @@ def extract_time(doc, out, start=0, end=None, channels=None, **kwargs):
           recording start)
         * `datetime.datetime` (an explicit UTC time)
 
-    :param doc: A loaded `Dataset` or the name of a local IDE file.
+    :param doc: A `Dataset` or the name of a local IDE file. `Dataset`
+        objects do not have to be fully imported.
     :param out: A filename or stream to which to save the extracted data.
     :param start: The starting time. Defaults to the start of the recording.
     :param end: The ending time. Defaults to the end of the recording.
