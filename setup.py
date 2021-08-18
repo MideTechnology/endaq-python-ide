@@ -5,9 +5,9 @@ with open('README.rst', 'r', encoding='utf-8') as fh:
     long_description = fh.read()
 
 INSTALL_REQUIRES = [
-    "numpy >= 1.16.6,"
-    "ebmlite >= 3.0.0",
-    "idelib >= 3.2.0",
+    "numpy>=1.16.6",
+    "ebmlite>=3.0.0",
+    "idelib>=3.2.0",
     "requests",
     "pandas",
     "jinja2",  # required for pandas.DataFrame.style
