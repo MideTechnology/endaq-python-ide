@@ -142,7 +142,6 @@ def get_doc(name=None, filename=None, url=None, parsed=True,
 
     elif url:
         kwargs.setdefault('name', url)
-        kwargs.setdefault('getExitCond', False)  # Doesn't work with URL files. Fix?
         parsed_url = parsed_url or urlparse(url)
         if parsed_url.scheme.startswith('http'):
             stream, _total = _get_url(url, localfile=localfile, params=params, cookies=cookies)
