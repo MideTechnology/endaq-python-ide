@@ -12,7 +12,8 @@ DRIVE_URL = "https://docs.google.com/uc"
 
 def get_file_id(url):
     """
-    Extract the Google Drive file ID from a URL.
+    Extract the Google Drive file ID from a URL. The ID can be in the
+    URL path itself, or a query argument.
 
     :param url: The Google Drive 'shared link'.
     :return: The file ID portion of the URL.
@@ -34,13 +35,8 @@ def get_file_id(url):
 
 def gdrive_download(url, localfile, params=None, cookies=None, drive_url=DRIVE_URL):
     """
-    Retrieve an IDE from Google Drive.
-
-    NOTE: This is kind of a hack. Alternatives:
-        * https://github.com/ndrplz/google-drive-downloader
-        * https://github.com/wkentaro/gdown
-        * https://pythonhosted.org/PyDrive/filemanagement.html#download-file-content
-        * google-api-core and google-api-python-client
+    Retrieve an IDE from Google Drive. The file must be set to be shared
+    with anyone with the URL.
 
     :param url: The 'shared link' to the file on Google Drive.
     :param localfile: The local filename (if saving the file).
