@@ -281,15 +281,25 @@ def get_channel_table(dataset, measurement_type=ANY, start=0, end=None,
         return styled
 
 
-def to_pandas(channel: idelib.dataset.Channel) -> pd.DataFrame:
-    """ Read data from an eventarray object into a pandas DataFrame.
+def to_pandas(channel: idelib.dataset.Channel, absolute_time: bool = False) -> pd.DataFrame:
+    """ Read IDE data into a pandas DataFrame.
+
+        :param channel: a `Channel` object, as produced from `Dataset.channels`
+            or `endaq.ide.get_channels`
+        :kwarg absolute_time: whether to index elements by datetime (`True`)
+            or timedelta (`False`); defaults to `False`
+        :return: a `pandas.DataFrame` containing the channel's data
     """
     data = channel.getSession().arraySlice()
     t, data = data[0], data[1:].T
-    t = (1e3*t).astype("timedelta64[ns]") + np.datetime64(
-        channel.dataset.lastUtcTime, "s"
+
+    t = (1e3*t).astype("timedelta64[ns]")
+    if absolute_time:
+        t = t + np.datetime64(channel.dataset.lastUtcTime, "s")
+
+    result = pd.DataFrame(
+        data, index=t, columns=[sch.name for sch in channel.subchannels]
     )
-    result = pd.DataFrame(data, index=t, columns=[sch.name for sch in channel.subchannels])
     result.index.name = "timestamp"
 
     return result
