@@ -1,11 +1,14 @@
 """
 Functions for retrieving summary data from a dataset.
 """
+from __future__ import annotations
+
 from collections import defaultdict
 import datetime
 import string
 import warnings
 
+import numpy as np
 import pandas as pd
 import idelib
 
@@ -278,20 +281,15 @@ def get_channel_table(dataset, measurement_type=ANY, start=0, end=None,
         return styled
 
 
-def to_pandas(eventarray):
+def to_pandas(channel: idelib.dataset.Channel) -> pd.DataFrame:
     """ Read data from an eventarray object into a pandas DataFrame.
     """
-    data = eventarray.arraySlice()
-
-    if isinstance(eventarray.parent, idelib.dataset.SubChannel):
-        columns = [eventarray.parent.axisName]
-    elif isinstance(eventarray.parent, idelib.dataset.Channel):
-        columns = [
-            eventarray.parent.subchannels[i].axisName
-            for i in range(len(eventarray.parent))
-        ]
-
-    return pd.DataFrame(
-        data[1:].T,
-        columns=columns,
+    data = channel.getSession().arraySlice()
+    t, data = data[0], data[1:].T
+    t = (1e3*t).astype("timedelta64[ns]") + np.datetime64(
+        channel.dataset.lastUtcTime, "s"
     )
+    result = pd.DataFrame(data, index=t, columns=[sch.name for sch in channel.subchannels])
+    result.index.name = "timestamp"
+
+    return result
