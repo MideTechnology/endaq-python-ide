@@ -125,13 +125,14 @@ class ChannelTableTests(unittest.TestCase):
         self.assertListEqual(list(ct3.data['end']), list(ct2.data['end']))
 
 
-def test_toPandas(test_IDE):
-    eventarray = test_IDE.channels[32].getSession()
+def test_to_pandas(test_IDE):
+    channel = test_IDE.channels[32]
+    eventarray = channel.getSession()
 
-    result = info.to_pandas(eventarray)
+    result = info.to_pandas(channel)
 
     assert len(result) == len(eventarray)
-    assert result.columns.tolist() == [sch.axisName for sch in test_IDE.channels[32].subchannels]
+    assert result.columns.tolist() == [sch.name for sch in channel.subchannels]
     assert np.all(result.to_numpy() == eventarray.arrayValues().T)
 
 
