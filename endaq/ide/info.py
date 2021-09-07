@@ -289,7 +289,7 @@ def to_pandas(
 
         :param channel: a `Channel` object, as produced from `Dataset.channels`
             or `endaq.ide.get_channels`
-        :kwarg absolute_time: how to index elements by time:
+        :kwarg time_mode: how to index elements by time:
             - "seconds" - a `pandas.Float64Index` of relative timestamps, in seconds
             - "timedelta" - a `pandas.TimeDeltaIndex` of relative timestamps
             - "datetime" - a `pandas.DateTimeIndex` of absolute timestamps
