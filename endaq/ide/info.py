@@ -284,7 +284,7 @@ def get_channel_table(dataset, measurement_type=ANY, start=0, end=None,
 
 def to_pandas(
     channel: idelib.dataset.Channel,
-    time_mode: Literal["seconds", "relative", "absolute"] = "relative",
+    time_mode: Literal["seconds", "timedelta", "datetime"] = "timedelta",
 ) -> pd.DataFrame:
     """ Read IDE data into a pandas DataFrame.
 
@@ -292,8 +292,8 @@ def to_pandas(
             or `endaq.ide.get_channels`
         :kwarg absolute_time: how to index elements by time:
             - "seconds" - a `pandas.Float64Index` of relative timestamps, in seconds
-            - "relative" - a `pandas.TimeDeltaIndex` of relative timestamps
-            - "absolute" - a `pandas.DateTimeIndex` of absolute timestamps
+            - "timedelta" - a `pandas.TimeDeltaIndex` of relative timestamps
+            - "datetime" - a `pandas.DateTimeIndex` of absolute timestamps
         :return: a `pandas.DataFrame` containing the channel's data
     """
     data = channel.getSession().arraySlice()
@@ -302,9 +302,9 @@ def to_pandas(
     t = (1e3*t).astype("timedelta64[ns]")
     if time_mode == "seconds":
         t = t / np.timedelta64(1, "s")
-    elif time_mode == "absolute":
+    elif time_mode == "datetime":
         t = t + np.datetime64(channel.dataset.lastUtcTime, "s")
-    elif time_mode != "relative":
+    elif time_mode != "timedelta":
         raise ValueError(f'invalid time mode "{time_mode}"')
 
     result = pd.DataFrame(
