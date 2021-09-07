@@ -67,7 +67,7 @@ class GetByTypeTests(unittest.TestCase):
 
     def test_split_types(self):
         inc, exc = measurement.split_types("*")
-        self.assertEqual(len(measurement.MeasurementType.types), len(inc))
+        self.assertEqual(len(measurement.MeasurementType.names), len(inc))
         self.assertEqual(len(exc), 0)
 
         inc, exc = measurement.split_types(measurement.ACCELERATION + measurement.PRESSURE - measurement.LIGHT)
