@@ -2,7 +2,6 @@
 Functions for retrieving summary data from a dataset.
 """
 from __future__ import annotations
-from typing import Union, Literal
 
 from collections import defaultdict
 import datetime
