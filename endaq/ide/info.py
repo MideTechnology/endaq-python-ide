@@ -2,6 +2,7 @@
 Functions for retrieving summary data from a dataset.
 """
 from __future__ import annotations
+from typing import Union, Literal
 
 from collections import defaultdict
 import datetime
@@ -281,21 +282,34 @@ def get_channel_table(dataset, measurement_type=ANY, start=0, end=None,
         return styled
 
 
-def to_pandas(channel: idelib.dataset.Channel, absolute_time: bool = False) -> pd.DataFrame:
+def to_pandas(
+    channel: idelib.dataset.Channel,
+    time_mode: Union[
+        Literal["seconds"],
+        Literal["relative"],
+        Literal["absolute"],
+    ] = "relative",
+) -> pd.DataFrame:
     """ Read IDE data into a pandas DataFrame.
 
         :param channel: a `Channel` object, as produced from `Dataset.channels`
             or `endaq.ide.get_channels`
-        :kwarg absolute_time: whether to index elements by datetime (`True`)
-            or timedelta (`False`); defaults to `False`
+        :kwarg absolute_time: how to index elements by time:
+            - "seconds" - a `pandas.Float64Index` of relative timestamps, in seconds
+            - "relative" - a `pandas.TimeDeltaIndex` of relative timestamps
+            - "absolute" - a `pandas.DateTimeIndex` of absolute timestamps
         :return: a `pandas.DataFrame` containing the channel's data
     """
     data = channel.getSession().arraySlice()
     t, data = data[0], data[1:].T
 
     t = (1e3*t).astype("timedelta64[ns]")
-    if absolute_time:
+    if time_mode == "seconds":
+        t = t / np.timedelta64(1, "s")
+    elif time_mode == "absolute":
         t = t + np.datetime64(channel.dataset.lastUtcTime, "s")
+    elif time_mode != "relative":
+        raise ValueError(f'invalid time mode "{time_mode}"')
 
     result = pd.DataFrame(
         data, index=t, columns=[sch.name for sch in channel.subchannels]
