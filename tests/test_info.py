@@ -125,14 +125,19 @@ class ChannelTableTests(unittest.TestCase):
         self.assertListEqual(list(ct3.data['end']), list(ct2.data['end']))
 
 
-def test_to_pandas(test_IDE):
+@pytest.mark.parametrize("time_mode", ["seconds", "relative", "absolute"])
+def test_to_pandas(test_IDE, time_mode):
     channel = test_IDE.channels[32]
     eventarray = channel.getSession()
 
-    result = info.to_pandas(channel)
+    result = info.to_pandas(channel, time_mode=time_mode)
 
     assert len(result) == len(eventarray)
     assert result.columns.tolist() == [sch.name for sch in channel.subchannels]
+    assert np.issubdtype(
+        result.index.values.dtype,
+        dict(seconds=np.float64, relative=np.timedelta64, absolute=np.datetime64)[time_mode],
+    )
     assert np.all(result.to_numpy() == eventarray.arrayValues().T)
 
 
