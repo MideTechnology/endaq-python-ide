@@ -284,11 +284,7 @@ def get_channel_table(dataset, measurement_type=ANY, start=0, end=None,
 
 def to_pandas(
     channel: idelib.dataset.Channel,
-    time_mode: Union[
-        Literal["seconds"],
-        Literal["relative"],
-        Literal["absolute"],
-    ] = "relative",
+    time_mode: Literal["seconds", "relative", "absolute"] = "relative",
 ) -> pd.DataFrame:
     """ Read IDE data into a pandas DataFrame.
 
