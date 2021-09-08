@@ -2,6 +2,7 @@
 Functions for retrieving summary data from a dataset.
 """
 from __future__ import annotations
+import typing
 
 from collections import defaultdict
 import datetime
@@ -283,7 +284,7 @@ def get_channel_table(dataset, measurement_type=ANY, start=0, end=None,
 
 def to_pandas(
     channel: idelib.dataset.Channel,
-    time_mode: 'Literal["seconds", "timedelta", "datetime"]' = "timedelta",
+    time_mode: typing.Literal["seconds", "timedelta", "datetime"] = "timedelta",
 ) -> pd.DataFrame:
     """ Read IDE data into a pandas DataFrame.
 
