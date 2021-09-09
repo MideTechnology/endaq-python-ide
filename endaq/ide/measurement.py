@@ -20,23 +20,29 @@ from idelib.dataset import Dataset, Channel, SubChannel
 
 
 class MeasurementType:
-    """ Singleton marker object for filtering channels by measurement type.
+    """ Singleton/sentinel marker object for filtering channels by measurement
+        type.
     """
-    # TODO: Fix nomenclature. "Singleton" may not be the correct term; there are multiple instances
-    #   of MeasurementType, but not multiple *duplicate* ones.
+    # TODO: Fix nomenclature. "Singleton" may not be the correct term; there
+    #  are multiple instances of MeasurementType, but not multiple *duplicate*
+    #  ones. This may be closer to the "Sentinel" pattern, but the class has
+    #  more functionality than just marking.
 
-    types = {}
+    types = {}  # Maps all measurement type 'key' strings to objects.
+    names = {}  # Maps display names to objects.
     verbose = False
 
-    def __new__(cls, name, key, labels=None, doc=None):
+    def __new__(cls, *keys, labels=None, doc=None):
         """ Create and return a new object, if one with a matching `key` does
             not already exist. If it does, the previous instance is returned.
             Called prior to `__init__()`.
 
-            :param name: The display name of the measurement type.
-            :param key: The abbreviated 'key' string for the type. Functions
-                that use `MeasurementType` objects can also use those key
-                strings.
+            The first argument is taken as the display name of the
+            measurement type. Its first 3 characters are used as the default
+            key (the string actually used in filtering). Functions that use
+            `MeasurementType` objects can also use those key strings.
+            Additional non-keyword arguments are taken as alternate keys.
+
             :param labels: A list/tuple of substrings to match against
                 `Channel` and `SubChannel` unit labels, used to identify
                 the appropriate `NeasurementType` instance. The `name` is
@@ -44,28 +50,42 @@ class MeasurementType:
             :param doc: A docstring for the `MeasurementType` instance.
             :returns: `MeasurementType`
         """
-        key = str(key).lower()
-        if key not in cls.types:
-            obj = super().__new__(cls)
-            obj._name = name
-            obj._key = key
-            if labels is not None:
-                labels = (labels.lower(),) if isinstance(labels, str) else labels
-                labels = tuple(labels) if labels else ()
-                if name not in labels:
-                    labels += (name.lower(),)
-            obj._labels = labels
-            obj.__doc__ = doc or name
-            cls.types[key] = obj
-        return cls.types[key]
+        obj = None
+        name = keys[0].strip()
+        for key in keys:
+            key = str(key).strip().lower()[:3]
+            obj = cls.types.get(key, None)
+            if not obj:
+                if name not in cls.names:
+                    obj = super().__new__(cls)
+                    obj._name = name
+                    obj._key = key
+                    obj._keys = set()  # Alternative keys for this object
+                    if labels is not None:
+                        labels = (labels.strip().lower(),) if isinstance(labels, str) else labels
+                        labels = tuple(labels) if labels else ()
+                        if name not in labels:
+                            labels += (name.lower(),)
+                    obj._labels = labels
+                    obj.__doc__ = doc or name
+                    cls.types[key] = obj
+                    cls.names[name] = obj
+                else:
+                    obj = cls.names[name]
+                    cls.types[key] = obj
+            obj._keys.add(key)
+        return obj
 
     def __str__(self):
         return self._key
 
     def __repr__(self):
-        if self.verbose:
-            return f"<Measurement Type: {self._name} {self.key!r})>"
-        return f"<Measurement Type: {self._name}>"
+        if not self.verbose:
+            return f"<MeasurementType: {self._name}>"
+        keys = ', '.join([repr(k) for k in self._keys if k != self.key])
+        if keys:
+            return f"<MeasurementType: {self._name} {self.key!r} (alt: {keys})>"
+        return f"<MeasurementType: {self._name} {self.key!r})>"
 
     def __eq__(self, other):
         return str(self) == str(other)
@@ -98,6 +118,18 @@ class MeasurementType:
     def __neg__(self):
         # Negates (appends a `-`) so query-like strings can be built.
         return f"-{self.key}"
+
+    def __getitem__(self, *args, **kwargs):
+        # For basic required string interoperability
+        return self._key.__getitem__(*args, **kwargs)
+
+    def upper(self):
+        # For basic required string interoperability
+        return self._key.upper()
+
+    def lower(self):
+        # For basic required string interoperability
+        return self._key.lower()
 
     @property
     def name(self):
@@ -138,17 +170,17 @@ class MeasurementType:
 # ============================================================================
 
 
-ANY = MeasurementType("Any/all", "*",
+ANY = MeasurementType("Any/all", "*", "any", "all",
     doc="Marker object for matching any/all measurement types",
     labels=("*",))
 
-ACCELERATION = MeasurementType("Acceleration", "acc",
+ACCELERATION = MeasurementType("Acceleration", "acc", "g",
     doc="Marker object for filtering channels with acceleration data",
     labels=())
-ORIENTATION = MeasurementType("Orientation", "imu",
+ORIENTATION = MeasurementType("Orientation", "imu", "qua", "gyr",
     doc="Marker object for filtering channels with rotation/orientation data",
     labels=("quaternion", "euler", "orientation"))
-ROTATION = MeasurementType("Rotation", "rot",
+ROTATION = MeasurementType("Rotation", "rot", "ang",
     doc="Marker object for filtering channels with angular change rate data",
     labels=("rotation", "gyro"))
 AUDIO = MeasurementType("Audio", "mic",
@@ -157,19 +189,19 @@ AUDIO = MeasurementType("Audio", "mic",
 LIGHT = MeasurementType("Light", "lux",
     doc="Marker object for filtering channels with light intensity data",
     labels=("lux", "uv"))
-PRESSURE = MeasurementType("Pressure", "pre",
+PRESSURE = MeasurementType("Pressure",
     doc="Marker object for filtering channels with air pressure data",
     labels=())  # pressures
-TEMPERATURE = MeasurementType("Temperature", "tmp",
+TEMPERATURE = MeasurementType("Temperature",
     doc="Marker object for filtering channels with temperature data",
     labels=())  # temperature
-HUMIDITY = MeasurementType("Humidity", "hum",
+HUMIDITY = MeasurementType("Relative Humidity", "hum",
     doc="Marker object for filtering channels with (relative) humidity data",
     labels=())  # Humidity
-LOCATION = MeasurementType("Location", "gps",
+LOCATION = MeasurementType("Location", "pos", "gps",
     doc="Marker object for filtering channels with location data",
     labels=("pos",))  # GPS
-SPEED = MeasurementType("Speed", "spd",
+SPEED = MeasurementType("Speed",
     doc="Marker object for filtering channels with rate-of-speed data",
     labels=("velocity",))  # GPS Ground Speed
 TIME = MeasurementType("Time", "epo",
@@ -177,21 +209,21 @@ TIME = MeasurementType("Time", "epo",
     labels=("epoch",))  # GPS Epoch Time
 
 # For potential future use
-GENERIC = MeasurementType("Generic/Unspecified", "raw",
+GENERIC = MeasurementType("Generic/Unspecified", "adc", "raw",
     labels=("adc", "raw"))
-ALTITUDE = MeasurementType("Altitude", "alt",
+ALTITUDE = MeasurementType("Altitude",
     doc="Marker object for filtering channels with altitude data",
     labels=())
-VOLTAGE = MeasurementType("Voltage", "vol",
+VOLTAGE = MeasurementType("Voltage",
     doc="Marker object for filtering channels with voltmeter data",
     labels=("volt",))
-DIRECTION = MeasurementType("Direction", "dir",
+DIRECTION = MeasurementType("Direction",
     doc="Marker object for filtering channels with 2D directional data",
     labels=("compass", "heading"))
 MAGNETIC = MeasurementType("Magnetic Field", "emf",
     doc="Marker object for filtering channels with magnetic field strength data",
     labels=("emf", "magnetic"))
-FREQUENCY = MeasurementType("Frequency", "fre",
+FREQUENCY = MeasurementType("Frequency",
     doc="Marker object for filtering channels with frequency data",
     labels=("rate",))
 
@@ -261,6 +293,7 @@ def split_types(query):
     # NOTE: Casting to string and parsing isn't always required, but this
     #   isn't used often enough to require high performance optimization.
     for token in shlex(query):
+        token = token.lower()[:3]
         if token in MeasurementType.types:
             if prev == "-":
                 exc.add(MeasurementType.types[token])
