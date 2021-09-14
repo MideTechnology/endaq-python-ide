@@ -268,10 +268,11 @@ def get_channel_table(dataset, measurement_type=ANY, start=0, end=None,
         result['samples'].append(samples)
         result['rate'].append(rate)
 
-        dmin, dmean, dmax = data.getRangeMinMeanMax(start, end)
-        result['min'].append(dmin)
-        result['mean'].append(dmean)
-        result['max'].append(dmax)
+        # # TODO: RESTORE AFTER FIX IN idelib
+        # dmin, dmean, dmax = data.getRangeMinMeanMax(start, end)
+        # result['min'].append(dmin)
+        # result['mean'].append(dmean)
+        # result['max'].append(dmax)
 
     if formatting is False:
         return pd.DataFrame(result).style
