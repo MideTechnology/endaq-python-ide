@@ -91,27 +91,28 @@ def get_doc(name=None, filename=None, url=None, parsed=True, start=0, end=None,
     One and only one must be specified. Attempting to supply more than one
     will generate an error.
 
-    Example usage:
-    ```
-    get_doc("my_recording.ide")
-    get_doc("https://example.com/remote_recording.ide")
-    get_doc(filename="my_recording.ide")
-    get_doc(url="https://example.com/remote_recording.ide")
-    get_doc(filename="my_recording.ide", start="1:23")
-    ```
+    Example usage::
+
+        get_doc("my_recording.ide")
+        get_doc("https://example.com/remote_recording.ide")
+        get_doc(filename="my_recording.ide")
+        get_doc(url="https://example.com/remote_recording.ide")
+        get_doc(filename="my_recording.ide", start="1:23")
 
     The `start` and `end` times, if used, may be specified in several
     ways:
-        * `int`/`float` (Microseconds from the recording start)
-        * `str` (formatted as a time from the recording start, e.g.,
-          `MM:SS`, `HH:MM:SS`, `DDd HH:MM:SS`). More examples:
-            * ``":01"`` or ``":1"`` or ``"1s"`` (1 second)
-            * ``"22:11"`` (22 minutes, 11 seconds)
-            * ``"3:22:11"`` (3 hours, 22 minutes, 11 seconds)
-            * ``"1d 3:22:11"`` (1 day, 3 hours, 22 minutes, 11 seconds)
-        * `datetime.timedelta` or `pandas.Timedelta` (time from the
-          recording start)
-        * `datetime.datetime` (an explicit UTC time)
+
+    * `int`/`float` (Microseconds from the recording start)
+    * `str` (formatted as a time from the recording start, e.g., `MM:SS`,
+      `HH:MM:SS`, `DDd HH:MM:SS`). More examples:
+
+        * ``":01"`` or ``":1"`` or ``"1s"`` (1 second)
+        * ``"22:11"`` (22 minutes, 11 seconds)
+        * ``"3:22:11"`` (3 hours, 22 minutes, 11 seconds)
+        * ``"1d 3:22:11"`` (1 day, 3 hours, 22 minutes, 11 seconds)
+    * `datetime.timedelta` or `pandas.Timedelta` (time from the
+      recording start)
+    * `datetime.datetime` (an explicit UTC time)
 
     :param name: The name or URL of the IDE. The method of fetching it will
         be automatically chosen based on how it is formatted.
@@ -216,16 +217,18 @@ def extract_time(doc, out, start=0, end=None, channels=None, **kwargs):
 
     The `start` and `end` times, if used, may be specified in several
     ways:
-        * `int`/`float` (Microseconds from the recording start)
-        * `str` (formatted as a time from the recording start, e.g.,
-          `MM:SS`, `HH:MM:SS`, `DDd HH:MM:SS`). More examples:
-            * ``":01"`` or ``":1"`` or ``"1s"`` (1 second)
-            * ``"22:11"`` (22 minutes, 11 seconds)
-            * ``"3:22:11"`` (3 hours, 22 minutes, 11 seconds)
-            * ``"1d 3:22:11"`` (1 day, 3 hours, 22 minutes, 11 seconds)
-        * `datetime.timedelta` or `pandas.Timedelta` (time from the
-          recording start)
-        * `datetime.datetime` (an explicit UTC time)
+
+    * `int`/`float` (Microseconds from the recording start)
+    * `str` (formatted as a time from the recording start, e.g., `MM:SS`,
+      `HH:MM:SS`, `DDd HH:MM:SS`). More examples:
+
+        * ``":01"`` or ``":1"`` or ``"1s"`` (1 second)
+        * ``"22:11"`` (22 minutes, 11 seconds)
+        * ``"3:22:11"`` (3 hours, 22 minutes, 11 seconds)
+        * ``"1d 3:22:11"`` (1 day, 3 hours, 22 minutes, 11 seconds)
+    * `datetime.timedelta` or `pandas.Timedelta` (time from the
+      recording start)
+    * `datetime.datetime` (an explicit UTC time)
 
     :param doc: A `Dataset` or the name of a local IDE file. `Dataset`
         objects do not have to be fully imported.
