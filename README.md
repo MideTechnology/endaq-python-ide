@@ -47,11 +47,6 @@ Once an IDE file has been loaded, `endaq.ide.get_channel_table()` will retrieve 
 get_channel_table(doc)
 ```
 
-
-
-
-<style type="text/css">
-</style>
 <table id="T_d2cbb_">
   <thead>
     <tr>
@@ -275,9 +270,6 @@ get_channel_table(doc, ACCELERATION)
 
 
 
-
-<style type="text/css">
-</style>
 <table id="T_9f9cf_">
   <thead>
     <tr>
@@ -381,9 +373,6 @@ get_channel_table(doc, ACCELERATION+TEMPERATURE)
 
 
 
-
-<style type="text/css">
-</style>
 <table id="T_68598_">
   <thead>
     <tr>
@@ -512,8 +501,6 @@ get_channel_table(doc, ACCELERATION+TEMPERATURE, start="0:05", end="0:10")
 
 
 
-<style type="text/css">
-</style>
 <table id="T_6ade9_">
   <thead>
     <tr>
