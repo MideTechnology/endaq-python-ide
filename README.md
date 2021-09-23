@@ -22,7 +22,7 @@ from endaq.ide import *
 
 ```python
 doc = get_doc("tests/test.ide")
-doc1 = get_doc("https://mide.services/software/test.ide")
+doc1 = get_doc("https://info.endaq.com/hubfs/data/surgical-instrument.ide")
 ```
 
 IDE files can be retrieved directly from Google Drive using a Drive 'sharable link' URL. The file must be set to allow access to "Anyone with the link."
