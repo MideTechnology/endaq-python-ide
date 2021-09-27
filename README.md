@@ -22,7 +22,7 @@ from endaq.ide import *
 
 ```python
 doc = get_doc("tests/test.ide")
-doc1 = get_doc("https://mide.services/software/test.ide")
+doc1 = get_doc("https://info.endaq.com/hubfs/data/surgical-instrument.ide")
 ```
 
 IDE files can be retrieved directly from Google Drive using a Drive 'sharable link' URL. The file must be set to allow access to "Anyone with the link."
@@ -625,3 +625,32 @@ A portion of an IDE file can be saved to another, new IDE. The source can be a l
 extract_time("tests/test.ide", "doc_extracted.ide", start="0:05", end="0:10")
 extract_time(doc1, "doc1_extracted.ide", start="0:05", end="0:10")
 ```
+
+## Additional sample IDE recording files
+Here are a number of example IDE files, which may be used with `endaq.ide`:
+
+
+```python
+file_urls = ['https://info.endaq.com/hubfs/data/surgical-instrument.ide', 
+             'https://info.endaq.com/hubfs/data/97c3990f-Drive-Home_70-1616632444.ide', 
+             'https://info.endaq.com/hubfs/data/High-Drop.ide',
+             'https://info.endaq.com/hubfs/data/HiTest-Shock.ide', 
+             'https://info.endaq.com/hubfs/data/Drive-Home_01.ide', 
+             'https://info.endaq.com/hubfs/data/Tower-of-Terror.ide',
+             'https://info.endaq.com/hubfs/data/Punching-Bag.ide', 
+             'https://info.endaq.com/hubfs/data/Gun-Stock.ide',
+             'https://info.endaq.com/hubfs/data/Seat-Base_21.ide',
+             'https://info.endaq.com/hubfs/data/Seat-Top_09.ide', 
+             'https://info.endaq.com/hubfs/data/Bolted.ide',
+             'https://info.endaq.com/hubfs/data/Motorcycle-Car-Crash.ide', 
+             'https://info.endaq.com/hubfs/data/train-passing.ide', 
+             'https://info.endaq.com/hubfs/data/baseball.ide',
+             'https://info.endaq.com/hubfs/data/Clean-Room-VC.ide',
+             'https://info.endaq.com/hubfs/data/enDAQ_Cropped.ide',
+             'https://info.endaq.com/hubfs/data/Drive-Home_07.ide',
+             'https://info.endaq.com/hubfs/data/ford_f150.ide',
+             'https://info.endaq.com/hubfs/data/Drive-Home.ide',
+             'https://info.endaq.com/hubfs/data/Mining-Data.ide',
+             'https://info.endaq.com/hubfs/data/Mide-Airport-Drive-Lexus-Hybrid-Dash-W8.ide'] 
+```
+These can be directly read from endaq.com using `endaq.ide.get_doc()`, as previously described.
