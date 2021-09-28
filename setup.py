@@ -9,7 +9,7 @@ INSTALL_REQUIRES = [
     "ebmlite>=3.0.0",
     "idelib>=3.2.0",
     "requests",
-    "pandas",
+    "pandas>=1.3",
     "jinja2",  # required for pandas.DataFrame.style
     ]
 
