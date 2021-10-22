@@ -7,7 +7,7 @@ with open('README.md', 'r', encoding='utf-8') as fh:
 INSTALL_REQUIRES = [
     "numpy>=1.16.6",
     "ebmlite>=3.0.0",
-    "idelib>=3.2.0",
+    "idelib>=3.2.2",
     "requests",
     "pandas>=1.3",
     "jinja2",  # required for pandas.DataFrame.style
@@ -23,7 +23,7 @@ EXAMPLE_REQUIRES = [
 
 setuptools.setup(
         name='endaq-ide',
-        version='1.0.0b1',
+        version='1.0.1',
         author='Mide Technology',
         author_email='help@mide.com',
         description='A comprehensive, user-centric Python API for working with enDAQ data and devices',
