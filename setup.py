@@ -16,7 +16,7 @@ INSTALL_REQUIRES = [
 TEST_REQUIRES = [
     "pytest",
     "pytest-cov",
-    "pytest-xdist",
+    "pytest-xdist[psutil]",
     ]
 
 EXAMPLE_REQUIRES = [
