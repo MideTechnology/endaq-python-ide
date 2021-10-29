@@ -41,6 +41,8 @@ doc3 = get_doc("tests/test.ide", start="5s", end="10s")
 
 ### Summarizing IDE files: `endaq.ide.get_channel_table()`
 Once an IDE file has been loaded, `endaq.ide.get_channel_table()` will retrieve basic summary information about its contents.
+Some environments, such as Jupyter Notebook or Colab, will automatically display the channel table data. From inside the
+Python Console, use `get_channel_table(doc).data` to display the information, or to access the table's contents directly as a pandas `DataFrame`.
 
 
 ```python
