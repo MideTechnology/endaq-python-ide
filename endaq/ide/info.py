@@ -294,7 +294,7 @@ def get_channel_table(dataset, measurement_type=ANY, start=0, end=None,
 
 
 def to_pandas(
-    channel: idelib.dataset.Channel,
+    channel: typing.Union[idelib.dataset.Channel, idelib.dataset.SubChannel],
     time_mode: typing.Literal["seconds", "timedelta", "datetime"] = "datetime",
 ) -> pd.DataFrame:
     """ Read IDE data into a pandas DataFrame.
@@ -319,10 +319,10 @@ def to_pandas(
         t = t + np.datetime64(channel.dataset.lastUtcTime, "s")
     elif time_mode != "timedelta":
         raise ValueError(f'invalid time mode "{time_mode}"')
+    
+    if hasattr(channel, "subchannels"):
+        columns = [sch.name for sch in channel.subchannels]
+    else:
+        columns = [channel.name]
 
-    result = pd.DataFrame(
-        data, index=t, columns=[sch.name for sch in channel.subchannels]
-    )
-    result.index.name = "timestamp"
-
-    return result
+    return pd.DataFrame(data, index=pd.Series(t, name="timestamp"), columns=columns)
