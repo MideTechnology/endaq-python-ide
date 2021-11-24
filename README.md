@@ -1,3 +1,6 @@
+**NOTE This package is now part of the main endaq repo, and can be found at https://github.com/MideTechnology/endaq-python/tree/development/endaq/ide This repo is Archived**
+---
+
 # endaq-ide
 
 `endaq.ide` contains high-level utility functions to aid in importing and inspecting enDAQ IDE recording files. Key functions/features include:
